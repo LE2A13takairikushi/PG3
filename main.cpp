@@ -5,6 +5,7 @@
 
 using namespace std;
 
+
 //山手線駅名リスト
 list<const char*> yamanoteLine{
 	"Tokyo",
