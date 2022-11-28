@@ -1,77 +1,252 @@
-ï»¿#include <stdio.h>
-#include <list>
-#include <vector>
-#include <functional>
+#include <Windows.h>
+#include <d3d12.h>
+#include <dxgi1_6.h>
 
-using namespace std;
+#pragma comment(lib,"d3d12.lib")
+#pragma comment(lib,"dxgi.lib")
+#include <DirectXMath.h>
+using namespace DirectX;
+#include <d3dcompiler.h>
+#pragma comment(lib,"d3dcompiler.lib")
+#include <DirectXTex.h>
+#include <iostream>
+#include <memory>
 
-list<const char*> yamanoteLine{
-	"Tokyo",
-	"Kanda",
-	"Akihabara",
-	"Okachimachi",
-	"Ueno",
-	"Uguisudani",
-	"Nippori",
-	"Tabata",
-	"Komagome",
-	"Sugamo",
-	"Otsuka",
-	"Ikebukuro",
-	"Mejiro",
-	"Takadanobaba",
-	"Shin-Okubo",
-	"Shinjuku",
-	"Yoyogi",
-	"Harajuku",
-	"Shibuya",
-	"Ebisu",
-	"Meguro",
-	"Gotanda",
-	"Osaki",
-	"Shinagawa",
-	"Tamachi",
-	"Hamamatsucho",
-	"Shimbashi",
-	"Yurakucho"
-};
+//©•ª‚ÅƒNƒ‰ƒX‰»‚µ‚½‚â‚Â
+#include "WinAPI.h"
+#include "TimeManager.h"
 
-void StationNamePrint(const char* string)
-{
-	printf("%s", string);
-	for (const char* stationname : yamanoteLine)
-	{
-		printf("%s\n", stationname);
+#include "Result.h"
+#include "Input.h"
+#include "DirectXInit.h"
+#include "Vertex.h"
+
+#include "ViewProjection.h"
+#include "Vector3.h"
+#include "Texture.h"
+
+#include "Sprite.h"
+#include "Pipeline.h"
+#include "ClearDrawScreen.h"
+#include "Billboard.h"
+
+#include "GameScene.h"
+
+#include "Sound.h"
+#include "DebugText.h"
+
+#include "Particle.h"
+#include "MathF.h"
+
+#include "SceneManager.h"
+
+
+//windowsƒAƒvƒŠ‚Å‚ÌƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒg(mainŠÖ”)
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+
+	///---DirectX‰Šú‰»ˆ—@‚±‚±‚©‚ç---///
+	
+#ifdef  _DEBUG
+//ƒfƒoƒbƒOƒŒƒCƒ„[‚ğƒIƒ“‚É
+	ComPtr<ID3D12Debug1> debugController;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+		debugController->EnableDebugLayer();
+		//‚±‚ê‚æ‚è‘O‚ÉƒfƒoƒCƒX‚ğ¶¬‚·‚é‚ÆƒfƒoƒCƒX‚ªÁ‚³‚ê‚é‚ç‚µ‚¢
+		debugController->SetEnableGPUBasedValidation(TRUE);
 	}
-}
 
-int main()
-{
-	StationNamePrint("\n1970å¹´ã®é§…ä¸€è¦§\n");
+#endif _DEBUG
 
-	for (list<const char*>::iterator itr = yamanoteLine.begin(); itr != yamanoteLine.end(); ++itr)
-	{
-		if (*itr == "Nippori")
+	WinAPI* winApi = WinAPI::GetInstance();
+	DirectX12* DX12 = DirectX12::GetInstance();
+
+#ifdef  _DEBUG
+	ID3D12InfoQueue* infoQueue;
+	if (SUCCEEDED(DX12->device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+		infoQueue->GetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION);//ƒ„ƒoƒCƒGƒ‰[‚É‚Æ‚Ü‚Æ
+		infoQueue->GetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR);	 //ƒGƒ‰[‚É~‚Ü‚é
+		infoQueue->Release();
+	}
+#endif  _DEBUG
+
+	Input* input_ = Input::GetInstance();
+
+	//DirectInput‚Ì‰Šú‰»
+	input_->DirectInputInit();
+
+	//ƒL[ƒ{[ƒhƒfƒoƒCƒX‚Ì¶¬
+	input_->DirectInputCreate();
+
+	///---DirectX‰Šú‰»ˆ—@‚±‚±‚Ü‚Å---///
+
+	TimeManager::Init();
+
+#pragma region •`‰æ‰Šú‰»ˆ—
+
+	CreateDepthView();
+
+	//ƒeƒNƒXƒ`ƒƒ‚Ìƒ[ƒh
+	TextureManager::GetInstance()->Initialize();
+	TextureManager::GetInstance()->PreLoad();
+
+	SpriteCommon::spriteCommon.Initialize();
+
+	ModelManager::GetInstance()->PreLoad();
+
+	PipelineSet object3dPipelineSet = CreateObject3DPipeline();
+
+	//ƒp[ƒeƒBƒNƒ‹—pƒpƒCƒvƒ‰ƒCƒ“¶¬
+	PipelineSet geometryObjectPipelineSet = CreateGeometryPipeline();
+
+	//ƒfƒoƒbƒOƒeƒLƒXƒg¶¬
+
+	std::unique_ptr<Texture> debugFont = std::make_unique<Texture>();
+	debugFont->Load(L"Resources/debugfont.png");
+
+	DebugText debugText;
+	debugText.Initialize(debugFont.get());
+
+	Obj3d skydome;
+	skydome.Initialize();
+	skydome.SetModel(&ModelManager::GetInstance()->skyDomeM);
+	skydome.SetTexture(&TextureManager::GetInstance()->slime);
+
+	//ƒrƒ…[•ÏŠ·s—ñ(“§‹“Š‰e)‚ğŒvZ
+	Camera *camera = Camera::camera;
+	camera->Initialize();
+
+	camera->target = {
+		0,0,0
+	};
+
+	camera->SetEye({ 0,20,-10 });
+
+#pragma endregion •`‰æ‰Šú‰»ˆ—
+
+	SoundManager soundManager;
+	soundManager.Initialize();
+
+	SoundData curser = soundManager.SoundLoadWave("Resources\\sound\\curser.wav");
+
+	//ƒQ[ƒ€ƒ‹[ƒv“à‚Åg‚¤•Ï”‚ÌéŒ¾
+	SceneManager* sceneManager = SceneManager::GetInstance();
+
+	Scene Tscene("Title",Title);
+	Scene Nscene("NewGame",NewGame);
+	Scene Pscene("GamePlay",GamePlay);
+	Scene Cscene("GameClear", GameClear);
+
+	sceneManager->LoadScene(Tscene);
+	sceneManager->LoadScene(Nscene);
+	sceneManager->LoadScene(Pscene);
+	sceneManager->LoadScene(Cscene);
+
+	sceneManager->ChangeScene(Title);
+
+	//ƒQ[ƒ€ƒ‹[ƒv
+	while (true){
+
+#pragma region ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW
+		if (PeekMessage(&winApi->msg, nullptr, 0, 0, PM_REMOVE)) {
+			TranslateMessage(&winApi->msg);		//ƒL[“ü—ÍƒƒbƒZ[ƒW‚Ìˆ—
+			DispatchMessage(&winApi->msg);		//ƒvƒƒV[ƒWƒƒ‚ÉƒƒbƒZ[ƒW‚ğ‘—‚é
+		}
+
+		if (winApi->msg.message == WM_QUIT) {
+			break;
+		}
+#pragma endregion ƒEƒBƒ“ƒhƒEƒƒbƒZ[ƒW
+
+#pragma region DirectX–ˆƒtƒŒ[ƒ€ˆ—
+		///---DirectX–ˆƒtƒŒ[ƒ€ˆ— ‚±‚±‚©‚ç---///
+		
+		ClearDrawScreen();
+
+		//XVˆ—
+
+		input_->Update();
+
+		camera->UpdatematView();
+	
+		if (input_->TriggerKey(DIK_SPACE))
 		{
-			++itr;
-			itr = yamanoteLine.insert(itr, "Nishi-Nippori");
+			if (sceneManager->nowScene->str == "GameClear")
+			{
+				sceneManager->ChangeScene(Title);
+			}
+			else if (sceneManager->nowScene->str == "Title")
+			{
+				sceneManager->ChangeScene(NewGame);
+			}
+			else if (sceneManager->nowScene->str == "NewGame")
+			{
+				sceneManager->ChangeScene(GamePlay);
+			}
+			else if (sceneManager->nowScene->str == "GamePlay")
+			{
+				sceneManager->ChangeScene(GameClear);
+			}
+		}
+
+		//ƒIƒuƒWƒFƒNƒg‚ÌXV
+		skydome.Update(camera->matView, camera->matProjection);
+
+		debugText.Print(SpriteCommon::spriteCommon,
+			"nowScene: " + sceneManager->nowScene->str, 50, 400);
+		
+		debugText.Print(SpriteCommon::spriteCommon,
+			"Press SPACE to move to the next scene.", 50, 450);
+		
+		debugText.Print(SpriteCommon::spriteCommon,
+			"Press ESCAPE to exit the application.", 50, 500);
+
+		///---DirectX–ˆƒtƒŒ[ƒ€ˆ— ‚±‚±‚Ü‚Å---///
+#pragma endregion DirectX–ˆƒtƒŒ[ƒ€ˆ—
+
+#pragma region ƒOƒ‰ƒtƒBƒbƒNƒXƒRƒ}ƒ“ƒh
+		//--4.•`‰æƒRƒ}ƒ“ƒh‚±‚±‚©‚ç--//
+		BasicObjectPreDraw( object3dPipelineSet);
+
+		//•`‰æˆ—
+		skydome.DrawMaterial();
+
+		GeometryObjectPreDraw(geometryObjectPipelineSet);
+	
+		//ƒXƒvƒ‰ƒCƒg‚Ì‘O•`‰æ(‹¤’ÊƒRƒ}ƒ“ƒh)
+		SpriteCommonBeginDraw(SpriteCommon::spriteCommon);
+
+		//ƒXƒvƒ‰ƒCƒg’P‘Ì•`‰æ
+		debugText.DrawAll();
+
+		//--4.•`‰æƒRƒ}ƒ“ƒh‚±‚±‚Ü‚Å--//
+
+#pragma endregion ƒOƒ‰ƒtƒBƒbƒNƒXƒRƒ}ƒ“ƒh
+
+#pragma region ‰æ–Ê“ü‚ê‘Ö‚¦
+
+		PostDraw();
+
+		debugText.PostDraw();
+
+#pragma endregion ‰æ–Ê“ü‚ê‘Ö‚¦
+
+		TimeManager::Update();
+
+		if (input_->PushKey(DIK_ESCAPE))
+		{
+			break;
 		}
 	}
 
-	StationNamePrint("\n2019å¹´ã®é§…ä¸€è¦§\n");
+	//‰¹ºƒf[ƒ^‚Íæ‚ÉxAudio2‚ğ‰ğ•ú‚µ‚È‚¯‚ê‚Î‚È‚ç‚È‚¢
+	//xAudio2‚Ì‰ğ•ú
+	soundManager.End();
 
-	for (list<const char*>::iterator itr = yamanoteLine.begin(); itr != yamanoteLine.end(); ++itr)
-	{
-		if (*itr == "Shinagawa")
-		{
-			++itr;
-			itr = yamanoteLine.insert(itr, "Takanawa-Gateway");
-		}
-	}
+	//‰¹ºƒf[ƒ^‚Ì‰ğ•ú
+	soundManager.SoundUnload(&curser);
 
-	StationNamePrint("\n2022å¹´ã®é§…ä¸€è¦§\n");
-
-	yamanoteLine.clear();
+	//ƒEƒBƒ“ƒhƒEƒNƒ‰ƒX‚ğ“o˜^‰ğœ
+	UnregisterClass(winApi->w.lpszClassName, winApi->w.hInstance);
 
 	return 0;
 }
