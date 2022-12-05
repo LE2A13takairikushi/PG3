@@ -1,77 +1,98 @@
-ï»¿#include <stdio.h>
-#include <list>
-#include <vector>
-#include <functional>
-
-using namespace std;
-
-list<const char*> yamanoteLine{
-	"Tokyo",
-	"Kanda",
-	"Akihabara",
-	"Okachimachi",
-	"Ueno",
-	"Uguisudani",
-	"Nippori",
-	"Tabata",
-	"Komagome",
-	"Sugamo",
-	"Otsuka",
-	"Ikebukuro",
-	"Mejiro",
-	"Takadanobaba",
-	"Shin-Okubo",
-	"Shinjuku",
-	"Yoyogi",
-	"Harajuku",
-	"Shibuya",
-	"Ebisu",
-	"Meguro",
-	"Gotanda",
-	"Osaki",
-	"Shinagawa",
-	"Tamachi",
-	"Hamamatsucho",
-	"Shimbashi",
-	"Yurakucho"
-};
-
-void StationNamePrint(const char* string)
-{
-	printf("%s", string);
-	for (const char* stationname : yamanoteLine)
-	{
-		printf("%s\n", stationname);
-	}
-}
+#include <stdio.h>
+#include "list.h"
+#include <stdlib.h>
 
 int main()
 {
-	StationNamePrint("\n1970å¹´ã®é§…ä¸€è¦§\n");
+	List list;
+	int operatorNum = 0;
 
-	for (list<const char*>::iterator itr = yamanoteLine.begin(); itr != yamanoteLine.end(); ++itr)
+	list.Create(&list.head, "banana");
+	list.Create(&list.head, "apple");
+	list.Create(&list.head, "orange");
+
+	while (true)
 	{
-		if (*itr == "Nippori")
+		operatorNum = 0;
+
+		printf("[—v‘f‚Ì‘€ì]\n");
+		printf("1.—v‘f‚Ìˆê——•\¦\n");
+		printf("2.ÅŒã”ö‚É—v‘f‚Ì‘}“ü\n");
+		printf("3.ÅŒã”ö‚Ì—v‘f‚Ìíœ\n");
+		printf("\n---------------------\n");
+		printf("‘€ì‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢\n");
+		while (operatorNum != 1 && operatorNum != 2 && operatorNum != 3)
 		{
-			++itr;
-			itr = yamanoteLine.insert(itr, "Nishi-Nippori");
+			scanf_s("%d", &operatorNum);
+			if (operatorNum != 1 && operatorNum != 2 && operatorNum != 3)
+			{
+				printf("•s³‚È’l‚ª“ü—Í‚³‚ê‚Ü‚µ‚½\n");
+				printf("‚à‚¤ˆê“x“ü—Í‚µ‚Ä‚­‚¾‚³‚¢\n");
+			}
+		}
+
+		if (operatorNum == 1)
+		{
+			printf("[—v‘f‚Ìˆê——•\¦]\n");
+			list.Index(&list.head);
+
+			printf("\n---------------------\n");
+			printf("0.‰Šú‰æ–Ê‚É–ß‚é\n");
+			while (operatorNum != 0)
+			{
+				scanf_s("%d", &operatorNum);
+				if (operatorNum != 0)
+				{
+					printf("•s³‚È’l‚ª“ü—Í‚³‚ê‚Ü‚µ‚½\n");
+					printf("‚à‚¤ˆê“x“ü—Í‚µ‚Ä‚­‚¾‚³‚¢\n");
+				}
+			};
+		}
+		if (operatorNum == 2)
+		{
+			char buf[50];
+
+			printf("[ƒŠƒXƒg—v‘f‚Ì‘}“ü]\n");
+			printf("\n’Ç‰Á‚·‚é—v‘f‚Ì’l‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢\n");
+
+			scanf_s("%s", buf, 50);
+			list.Create(&list.head,buf);
+			printf("—v‘fu%sv‚ªƒŠƒXƒg‚ÌÅŒã”ö‚É‘}“ü‚³‚ê‚Ü‚µ‚½\n",buf);
+
+			printf("\n---------------------\n");
+			printf("0.‰Šú‰æ–Ê‚É–ß‚é\n");
+			while (operatorNum != 0)
+			{
+				scanf_s("%d", &operatorNum);
+				if (operatorNum != 0)
+				{
+					printf("•s³‚È’l‚ª“ü—Í‚³‚ê‚Ü‚µ‚½\n");
+					printf("‚à‚¤ˆê“x“ü—Í‚µ‚Ä‚­‚¾‚³‚¢\n");
+				}
+			}
+		}
+		if (operatorNum == 3)
+		{
+			printf("[—v‘f‚Ìíœ]\n");
+
+			list.Delete();
+
+			printf("ÅŒã”ö‚Ì—v‘f‚ğíœ‚µ‚Ü‚µ‚½\n");
+			printf("\n---------------------\n");
+			printf("0.‰Šú‰æ–Ê‚É–ß‚é\n");
+			while (operatorNum != 0)
+			{
+				scanf_s("%d", &operatorNum);
+				if (operatorNum != 0)
+				{
+					printf("•s³‚È’l‚ª“ü—Í‚³‚ê‚Ü‚µ‚½\n");
+					printf("‚à‚¤ˆê“x“ü—Í‚µ‚Ä‚­‚¾‚³‚¢\n");
+				}
+			}
 		}
 	}
 
-	StationNamePrint("\n2019å¹´ã®é§…ä¸€è¦§\n");
-
-	for (list<const char*>::iterator itr = yamanoteLine.begin(); itr != yamanoteLine.end(); ++itr)
-	{
-		if (*itr == "Shinagawa")
-		{
-			++itr;
-			itr = yamanoteLine.insert(itr, "Takanawa-Gateway");
-		}
-	}
-
-	StationNamePrint("\n2022å¹´ã®é§…ä¸€è¦§\n");
-
-	yamanoteLine.clear();
+	system("pause");
 
 	return 0;
 }
