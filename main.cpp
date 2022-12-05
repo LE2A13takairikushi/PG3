@@ -1,77 +1,40 @@
 ﻿#include <stdio.h>
-#include <list>
-#include <vector>
-#include <functional>
-
-using namespace std;
-
-list<const char*> yamanoteLine{
-	"Tokyo",
-	"Kanda",
-	"Akihabara",
-	"Okachimachi",
-	"Ueno",
-	"Uguisudani",
-	"Nippori",
-	"Tabata",
-	"Komagome",
-	"Sugamo",
-	"Otsuka",
-	"Ikebukuro",
-	"Mejiro",
-	"Takadanobaba",
-	"Shin-Okubo",
-	"Shinjuku",
-	"Yoyogi",
-	"Harajuku",
-	"Shibuya",
-	"Ebisu",
-	"Meguro",
-	"Gotanda",
-	"Osaki",
-	"Shinagawa",
-	"Tamachi",
-	"Hamamatsucho",
-	"Shimbashi",
-	"Yurakucho"
-};
-
-void StationNamePrint(const char* string)
-{
-	printf("%s", string);
-	for (const char* stationname : yamanoteLine)
-	{
-		printf("%s\n", stationname);
-	}
-}
+#include <stdlib.h>
+#include "Enemy.h"
 
 int main()
 {
-	StationNamePrint("\n1970年の駅一覧\n");
+	//敵の生成
+	Enemy* enemy = new Enemy;
+	Enemy* enemy1 = new Enemy;
+	Enemy* enemy2 = new Enemy;
 
-	for (list<const char*>::iterator itr = yamanoteLine.begin(); itr != yamanoteLine.end(); ++itr)
-	{
-		if (*itr == "Nippori")
-		{
-			++itr;
-			itr = yamanoteLine.insert(itr, "Nishi-Nippori");
-		}
-	}
+	printf("\n");
 
-	StationNamePrint("\n2019年の駅一覧\n");
+	//状態表示(生きている状態が表示されるはず)
+	enemy->Draw();
+	enemy1->Draw();
+	enemy2->Draw();
 
-	for (list<const char*>::iterator itr = yamanoteLine.begin(); itr != yamanoteLine.end(); ++itr)
-	{
-		if (*itr == "Shinagawa")
-		{
-			++itr;
-			itr = yamanoteLine.insert(itr, "Takanawa-Gateway");
-		}
-	}
+	printf("\n");
 
-	StationNamePrint("\n2022年の駅一覧\n");
+	//敵を死んだ状態に
+	enemy->Kill();
 
-	yamanoteLine.clear();
+	printf("\n");
+
+	//状態表示(死んだ状態が表示されるはず)
+	enemy->Draw();
+	enemy1->Draw();
+	enemy2->Draw();
+
+	printf("\n");
+
+	delete enemy;
+	delete enemy1;
+	delete enemy2;
+
+	system("pause");
 
 	return 0;
 }
