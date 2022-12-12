@@ -1,27 +1,37 @@
 #include "Enemy.h"
 #include <stdio.h>
 
-bool Enemy::isAlive = true;
+void (Enemy::* Enemy::stateTable[])() =
+{
+	&Enemy::ShortAttack,
+	&Enemy::LongAttack,
+	&Enemy::Escape,
+};
 
 Enemy::Enemy()
 {
 	printf("“G‚ª¶‚Ü‚ê‚½I\n");
+	state = EnemyState::SHORTATTACK;
 }
 
-void Enemy::Draw()
+void Enemy::ShortAttack()
 {
-	if (isAlive)
-	{
-		printf("“G‚Í‚Ü‚¾¶‚«‚Ä‚¢‚é\n");
-	}
-	else
-	{
-		printf("“G‚Í€‚ñ‚Å‚¢‚é\n");
-	}
+	printf("“G‚Ì‹ßÚUŒ‚I\n");
+	state = EnemyState::LONGATTACK;
 }
 
-void Enemy::Kill()
+void Enemy::LongAttack()
 {
-	isAlive = false;
-	printf("“G‚ª€‚ñ‚¾I\n");
+	printf("“G‚Ì‰“‹——£UŒ‚I\n");
+	state = EnemyState::ESCAPE;
+}
+
+void Enemy::Escape()
+{
+	printf("“G‚ª“¦‚°‚Ä‚¢‚­I\n");
+}
+
+void Enemy::Update()
+{
+	(this->*stateTable[static_cast<size_t>(state)])();
 }

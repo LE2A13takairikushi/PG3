@@ -1,13 +1,26 @@
 #pragma once
 
+enum class EnemyState
+{
+	SHORTATTACK,
+	LONGATTACK,
+	ESCAPE,
+	STATENUM,
+};
+
 class Enemy
 {
 public:
-	static bool isAlive;
-
 	Enemy();
-	void Draw();
 
-	void Kill();
+	void ShortAttack();
+	void LongAttack();
+	void Escape();
+
+	void Update();
+
+	EnemyState state;
+
+	static void (Enemy::*stateTable[])();
 };
 
