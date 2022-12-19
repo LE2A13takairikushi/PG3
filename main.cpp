@@ -1,6 +1,5 @@
 ﻿#include <stdio.h>
 #include <stdlib.h>
-#include "Math.h"
 
 const float PI = 3.141592;
 
