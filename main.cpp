@@ -59,6 +59,7 @@ int main()
 		{
 			++itr;
 			itr = yamanoteLine.insert(itr, "Nishi-Nippori");
+			break;
 		}
 	}
 
@@ -71,6 +72,7 @@ int main()
 		{
 			++itr;
 			itr = yamanoteLine.insert(itr, "Takanawa-Gateway");
+			break;
 		}
 	}
 
