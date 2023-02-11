@@ -18,12 +18,15 @@ class TaskManager
 {
 public:
 	void NewTask(
-		Worker contact,
+		int workerID,
 		std::string taskName, 
 		std::string contents,
 		std::string deadLine,
 		int priority,
 		int status);
+
+	void NewWorler(std::string name = "",
+		std::string classname = "");
 
 	void Initialize();
 
