@@ -4,6 +4,10 @@
 class Worker
 {
 public:
+	Worker(
+		std::string name = "",
+		std::string classname = "");
+
 	//担当者のID
 	int id;
 
@@ -12,6 +16,20 @@ public:
 
 	//担当者のクラス
 	std::string classname;
+};
+
+enum PRIORITY_
+{
+	HIGH,
+	NORMAL,
+	LOW,
+};
+
+enum STATUS_
+{
+	COMPLETED,
+	WORKING,
+	NOTSTARTED,
 };
 
 class Task
@@ -29,13 +47,13 @@ public:
 	//タスクの内容
 	std::string contents;
 
-	//タスクの優先度
-	std::string priority;
+	//タスクの優先度(enumで指定する感じにしたいね)
+	int priority = LOW;
 
 	//タスクの期限
 	std::string deadLine;
 
-	//タスクの状態(完了or作業中or未完了)
-	std::string status;
+	//タスクの状態(完了or作業中or未完了)(enumで指定する感じにしたいね)
+	int status = NOTSTARTED;
 
 };
