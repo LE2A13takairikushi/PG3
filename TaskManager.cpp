@@ -101,6 +101,12 @@ void TaskManager::Update()
 		cout << "2でタスクの詳細表示に移動" << endl;
 		cout << "3でアプリを終了" << endl;
 		cin >> openum;
+		//cinの中身が初期化されない問題を解決するやつ
+		if (cin.fail())
+		{
+			cin.clear();
+		}
+		cin.ignore(1024, '\n');
 
 		if (openum == 1)
 		{
@@ -122,6 +128,12 @@ void TaskManager::Update()
 		cout << "3で担当者の削除" << endl;
 		cout << "4でメニューに戻る" << endl;
 		cin >> openum;
+		//cinの中身が初期化されない問題を解決するやつ
+		if (cin.fail())
+		{
+			cin.clear();
+		}
+		cin.ignore(1024, '\n');
 		
 		if (openum == 1)
 		{
@@ -144,6 +156,13 @@ void TaskManager::Update()
 			{
 				cout << "変更する担当者のIDを入力してください" << endl;
 				cin >> workerID;
+				//cinの中身が初期化されない問題を解決するやつ
+				if (cin.fail())
+				{
+					cin.clear();
+				}
+				cin.ignore(1024, '\n');
+
 				for (list<Worker>::iterator itr = workers.begin(); itr != workers.end(); ++itr)
 				{
 					if (itr->id == workerID)
@@ -180,6 +199,13 @@ void TaskManager::Update()
 			{
 				cout << "削除する担当者のIDを入力してください" << endl;
 				cin >> workerID;
+				//cinの中身が初期化されない問題を解決するやつ
+				if (cin.fail())
+				{
+					cin.clear();
+				}
+				cin.ignore(1024, '\n');
+				
 				for (list<Worker>::iterator itr = workers.begin(); itr != workers.end(); ++itr)
 				{
 					if (itr->id == workerID)
@@ -213,12 +239,22 @@ void TaskManager::Update()
 		cout << "7でメニューに戻る" << endl;
 		cin >> openum;
 
+		//cinの中身が初期化されない問題を解決するやつ
+		if (cin.fail())
+		{
+			cin.clear();
+		}
+		cin.ignore(1024, '\n');
+
 		if (openum == 1)
 		{
+			//一番手前のタスクなら打ち消し
+			if (nowTask == tasks.begin())nowTask++;
 			nowTask--;
 		}
 		if (openum == 2)
 		{
+			//一番奥のタスクなら打ち消し
 			nowTask++;
 			if (nowTask == tasks.end())nowTask--;
 		}
@@ -239,6 +275,13 @@ void TaskManager::Update()
 			{
 				cout << "担当者のIDを入力してください" << endl;
 				cin >> workerID;
+				//cinの中身が初期化されない問題を解決するやつ
+				if (cin.fail())
+				{
+					cin.clear();
+				}
+				cin.ignore(1024, '\n');
+
 				for (list<Worker>::iterator itr = workers.begin(); itr != workers.end(); ++itr)
 				{
 					if (itr->id == workerID)
@@ -280,6 +323,13 @@ void TaskManager::Update()
 				cout << "2で中" << endl;
 				cout << "3で低" << endl;
 				cin >> priorityT;
+				//cinの中身が初期化されない問題を解決するやつ
+				if (cin.fail())
+				{
+					cin.clear();
+				}
+				cin.ignore(1024, '\n');
+
 				switch (priorityT)
 				{
 				case 1:
@@ -328,6 +378,13 @@ void TaskManager::Update()
 				cout << "2で中" << endl;
 				cout << "3で低" << endl;
 				cin >> priorityT;
+				//cinの中身が初期化されない問題を解決するやつ
+				if (cin.fail())
+				{
+					cin.clear();
+				}
+				cin.ignore(1024, '\n');
+
 				switch (priorityT)
 				{
 				case 1:
