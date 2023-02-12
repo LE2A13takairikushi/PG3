@@ -77,6 +77,8 @@ void TaskManager::NewWorler(std::string name, std::string classname)
 	workers.back().fName += ".txt";
 
 	workers.back().OutPut();
+
+	cout << "ƒtƒ@ƒCƒ‹–¼:" << workers.back().fName << endl;
 }
 
 void TaskManager::Initialize()

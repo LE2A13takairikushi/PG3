@@ -14,7 +14,7 @@ Worker::Worker(std::string name, std::string classname)
 
 void Worker::OutPut()
 {
-	std::ofstream ofs("./data/worker/worker/" + fName);
+	std::ofstream ofs("./data/worker/" + fName);
 
 	if (ofs.fail()) {
 		std::cerr << "Failed to out file." << std::endl;
@@ -29,7 +29,7 @@ void Worker::OutPut()
 
 void Task::OutPut()
 {
-	std::ofstream ofs("./data/task/task/"+fName);
+	std::ofstream ofs("./data/task/"+fName);
 
 	if (ofs.fail()) {
 		std::cerr << "Failed to out file." << std::endl;
