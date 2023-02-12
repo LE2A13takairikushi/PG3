@@ -16,6 +16,10 @@ public:
 
 	//担当者のクラス
 	std::string classname;
+
+	std::string fName;
+
+	void OutPut();
 };
 
 enum PRIORITY_
@@ -56,4 +60,7 @@ public:
 	//タスクの状態(完了or作業中or未完了)(enumで指定する感じにしたいね)
 	int status = NOTSTARTED;
 
+	std::string fName;
+
+	void OutPut();
 };

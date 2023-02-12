@@ -1,0 +1,10 @@
+taskName hogehogetask2
+contactID 1
+className LE2A
+contactName É^ÉJÉC
+deadLine 2/30303030
+contents ÇµÇ≤Ç∆Ç‚ÇﬂÇΩÇ¢
+id 2
+priority 0
+status 2
+END 

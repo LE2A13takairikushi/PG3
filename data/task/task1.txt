@@ -1,0 +1,10 @@
+taskName hogehogeTask
+contactID 1
+className 
+contactName 
+deadLine 2/28
+contents ŽdŽ–‚µ‚ë
+id 1
+priority 0
+status 2
+END 
